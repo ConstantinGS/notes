@@ -21,15 +21,17 @@ class Repository(object):
             return print_text    
         except FileNotFoundError:
             print ("Файл не найден")
+            
 # Вывод заметки по номеру ID                              
     def find_note(self, id_note):
-        ret_note = ""
+
         try:
             with open(self.__path, encoding='utf-8') as r_file:
                 reader_object = csv.reader(r_file, delimiter =";")
                 for i in reader_object:
                     if i[0]==id_note:
                         return f"\n {i[0]} \n {i[1]} \n {i[2]} \n {i[3]} \n"
+                return "Такой заметки не существует"    
         except FileNotFoundError:
             print ("Файл не найден")
             
@@ -88,23 +90,29 @@ class Repository(object):
 # Редактировать заметку                            
     def change_note(self, id_note, ch_note, new_date):
         
+        merker = False
         new_file = []
         try:
             with open(self.__path, encoding='utf-8') as r_file:
                 reader_object = csv.reader(r_file, delimiter =";")
+  
                 for i in reader_object:
                     if i[0]!=id_note:
                         new_file.append(i)
                     else:
-                        new_file.append([i[0],i[1],ch_note, new_date])                 
+                        new_file.append([i[0],i[1],ch_note, new_date])
+                        merker = True                 
     
-          
+
             with open(self.__path,mode="w", encoding='utf-8') as w_file:
                 file_writer = csv.writer(w_file, delimiter = ";", lineterminator="\r")
                 for i in new_file:
                     file_writer.writerow(i)
                     
-            print("Заметка обновлена \n")
+            if merker: 
+                print("Заметка обновлена \n")
+            else:
+                print("Заметка не найдена \n")
             
         except FileNotFoundError:
             print ("Файл не найден")
